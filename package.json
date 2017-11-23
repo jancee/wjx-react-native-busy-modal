@@ -1,6 +1,6 @@
 {
   "name": "wjx-react-native-busy-modal",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A component for React Native, is a modal, used to show something is being processed.",
   "main": "index.js",
   "scripts": {

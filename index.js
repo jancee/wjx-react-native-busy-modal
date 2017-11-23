@@ -215,7 +215,7 @@ class BusyModalManager {
      * Modify the title as temporary title, until the modal is hidden
      * @param title
      */
-    changeToTempTitle(title) {
+    static changeToTempTitle(title) {
         busyModal.setState({tipText: title});
     }
 
