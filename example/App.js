@@ -13,21 +13,23 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import BusyModal from 'wjx-react-native-busy-modal';
+import {BusyModal, BusyModalManager} from 'wjx-react-native-busy-modal';
 
 export default class App extends Component<{}> {
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.mask}>
 
                 <TouchableOpacity onPress={() => {
-                    // BusyModal.show();
+                    BusyModalManager.show();
                     setTimeout(() => {
-                        // BusyModal.hide();
+                        BusyModalManager.hide();
                     }, 5000);
                 }}>
                     <Text>Show</Text>
                 </TouchableOpacity>
+
+                <BusyModal/>
 
             </View>
         );
@@ -35,7 +37,7 @@ export default class App extends Component<{}> {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    mask: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',

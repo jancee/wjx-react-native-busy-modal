@@ -1,6 +1,6 @@
 {
   "name": "wjx-react-native-busy-modal",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "A component for React Native, is a modal, used to show something is being processed.",
   "main": "index.js",
   "scripts": {
@@ -14,12 +14,21 @@
     "React",
     "Native",
     "Jancee",
-    "Modal"
+    "Modal",
+    "ios",
+    "android"
   ],
-  "peerDependencies": {
-    "react": ">=14.0.0",
-    "react-native": ">=0.3.0",
-    "prop-types": "^15.5.7"
+  "dependencies": {
+    "prop-types": "^15.6.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "4.5.0",
+    "eslint-plugin-react-app": "^1.0.2",
+    "husky": "0.14.3",
+    "lint-staged": "4.0.4",
+    "prettier": "1.6.1",
+    "react": ">=15.0.0"
   },
   "author": {
     "name": "Jingxi Wang",

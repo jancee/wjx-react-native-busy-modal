@@ -6,100 +6,226 @@
  * Author: Jingxi Wang <jancee.wang@qq.com>
  * Date: 2017-11-10 13:58
  */
+
 import React, {Component} from 'react';
 import {
     AppRegistry,
     StyleSheet,
     Text,
     View,
-    Modal
+    Modal,
+    Dimensions,
+    Image,
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from 'react-native'
 import PropTypes from 'prop-types';
 
-export default class BusyModal extends Component {
+const screen = Dimensions.get('window');
+const WIDTH = screen.width;
+const HEIGHT = screen.height;
+
+let busyModal;
+
+import defaultGifImages from './src/house'
+
+class BusyModal extends Component {
+
+    interval;
 
     static defaultProps = {
-        title: "请等待",
+        title: "Loading",
         containerStyle: {},
+        imageStyle: {},
+        titleStyle: {},
+        enableCancelOnClickBlank: false,
+        enableCancelOnClickModal: false,
+        gifInterval: 20,
+        gifImages: defaultGifImages,
     };
 
     static propTypes = {
         title: PropTypes.string,
-        containerStyle: PropTypes.object
+        containerStyle: PropTypes.object,
+        imageStyle: PropTypes.object,
+        titleStyle: PropTypes.object,
+        enableCancelOnClickBlank: PropTypes.bool,
+        gifInterval: PropTypes.number,
+        gifImages: PropTypes.array,
     };
-
-
-    /** Callable Methods **/
-    show() {
-        this.setState({isShow: true, tipText: this.props.title});
-    }
-
-    hide() {
-        this.setState({isShow: false});
-    }
-
-    updateCurrentTipText(tipText: string) {
-        this.setState({tipText: tipText});
-    }
 
     /** Internal Methods **/
     constructor(props) {
         super(props);
+        if (busyModal) {
+            throw "BusyModal only one component is allowed";
+        } else {
+            busyModal = this;
+        }
 
         this.state = {
             isShow: false,
             tipText: this.props.title,
-        }
+
+            gifIndex: 0,
+        };
+
+        console.log('打印props', this.props);
     }
 
     componentDidMount() {
-        this.animation.play();
+        this.interval = setInterval(() => {
+            let next = this.state.gifIndex + 1;
+            if (next >= this.props.gifImages.length) {
+                next = 0;
+            }
+            this.setState({gifIndex: next});
+        }, this.props.gifInterval);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    _renderGif() {
+
+        return (
+            <View style={{
+                height: 80, width: 80, justifyContent: 'center', alignItems: 'center'
+            }}>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={this.props.gifImages[this.state.gifIndex]}
+                           style={[{height: 50, width: 50}, this.props.imageStyle]}/>
+                </View>
+            </View>
+        )
     }
 
     render() {
-        return (
-            <View style={[this.state.isShow ? styles.container : styles.containerHidden, this.props.style]}>
-                <View style={styles.innerContainer}>
-                    <View style={{
-                        height: 120,
-                        width: 100,
-                        backgroundColor: "rgba(255,255,255,0.8)",
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 10,
-                    }}>
+        return this.state.isShow ? (
+            <View style={StyleSheet.absoluteFill}>
+
+                {/* touch blank callback, and expand to full screen */}
+                <TouchableWithoutFeedback onPress={() => {
+                    console.log('取消');
+                    if (this.props.enableCancelOnClickBlank) {
+                        BusyModalManager.hide();
+                    }
+                }}>
+                    <View style={{height: HEIGHT, width: WIDTH}}>
+
+                        {/* mask */}
                         <View style={{
-                            height: 80, width: 80
+                            flex: 1,
+                            backgroundColor: 'rgba(0,0,0,0.3)',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                         }}>
+
+                            {/* touch modal callback*/}
+                            <TouchableWithoutFeedback onPress={() => {
+                                if (this.props.enableCancelOnClickModal) {
+                                    BusyModalManager.hide();
+                                }
+                            }}>
+
+                                {/* real modal */}
+                                <View style={[styles.container, this.props.containerStyle]}>
+                                    <View style={{
+                                        height: 120,
+                                        width: 100,
+                                        backgroundColor: "rgba(255,255,255,0.8)",
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 10,
+                                    }}>
+                                        {this._renderGif()}
+                                        <Text style={[this.props.titleStyle]}> {this.state.tipText}</Text>
+                                    </View>
+                                </View>
+
+                            </TouchableWithoutFeedback>
+
                         </View>
-                        <Text>{this.state.tipText}</Text>
+
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
+
             </View>
-        );
+        ) : (
+            <View/>
+        )
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
+    mask: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: 'red'
     },
-    containerHidden: {
-        height: 0,
-        width: 0,
-        opacity: 0
-    },
-    innerContainer: {
+    container: {
         justifyContent: 'center',
         alignItems: 'center',
         height: 120,
         width: 100,
     }
 });
+
+class BusyModalManager {
+
+    /**
+     * show modal
+     */
+    static show() {
+        busyModal.setState({
+            isShow: true,
+            gifIndex: 0,
+            tipText: busyModal.props.title
+        });
+    }
+
+    /**
+     * hide modal
+     */
+    static hide() {
+        busyModal.setState({isShow: false});
+    }
+
+    /**
+     * delay ms to show
+     *
+     * @param ms
+     */
+    static showDelay(ms) {
+        setTimeout(() => {
+            this.show();
+        }, ms);
+    }
+
+    /**
+     * Show, then wait for ms to hide
+     *
+     * @param ms
+     */
+    static delayShow(ms) {
+        this.hide();
+        setTimeout(() => {
+            this.show();
+        }, ms);
+    }
+
+    /**
+     * Modify the title as temporary title, until the modal is hidden
+     * @param title
+     */
+    changeToTempTitle(title) {
+        busyModal.setState({tipText: title});
+    }
+
+}
+
+export {
+    BusyModal,
+    BusyModalManager
+}
