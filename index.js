@@ -57,11 +57,7 @@ class BusyModal extends Component {
     /** Internal Methods **/
     constructor(props) {
         super(props);
-        if (busyModal) {
-            throw "BusyModal only one component is allowed";
-        } else {
-            busyModal = this;
-        }
+        busyModal = this;
 
         this.state = {
             isShow: false,
