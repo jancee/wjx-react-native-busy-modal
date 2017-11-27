@@ -17,8 +17,9 @@ import {
     Dimensions,
     Image,
     TouchableWithoutFeedback,
-    TouchableOpacity
-} from 'react-native'
+    TouchableOpacity,
+    Animated,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 const screen = Dimensions.get('window');
@@ -42,6 +43,7 @@ class BusyModal extends Component {
         enableCancelOnClickModal: false,
         gifInterval: 20,
         gifImages: defaultGifImages,
+        animated: true
     };
 
     static propTypes = {
@@ -52,6 +54,7 @@ class BusyModal extends Component {
         enableCancelOnClickBlank: PropTypes.bool,
         gifInterval: PropTypes.number,
         gifImages: PropTypes.array,
+        animated: PropTypes.bool
     };
 
     /** Internal Methods **/
@@ -64,9 +67,9 @@ class BusyModal extends Component {
             tipText: this.props.title,
 
             gifIndex: 0,
-        };
 
-        console.log('打印props', this.props);
+            fadeAnim: new Animated.Value(0)
+        };
     }
 
     componentDidMount() {
@@ -81,6 +84,17 @@ class BusyModal extends Component {
 
     componentWillUnmount() {
         clearInterval(this.interval);
+    }
+
+    startAnimation(isShow, cb) {
+        Animated.timing(                            
+          this.state.fadeAnim, {
+            toValue: isShow ? 1 : 0,
+            duration: 500,
+            useNativeDriver: true
+        }).start(() => {
+            cb && cb();
+        });                   
     }
 
     _renderGif() {
@@ -111,11 +125,12 @@ class BusyModal extends Component {
                     <View style={{height: HEIGHT, width: WIDTH}}>
 
                         {/* mask */}
-                        <View style={{
+                        <Animated.View style={{
                             flex: 1,
                             backgroundColor: 'rgba(0,0,0,0.3)',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            opacity: this.state.fadeAnim
                         }}>
 
                             {/* touch modal callback*/}
@@ -142,7 +157,7 @@ class BusyModal extends Component {
 
                             </TouchableWithoutFeedback>
 
-                        </View>
+                        </Animated.View>
 
                     </View>
                 </TouchableWithoutFeedback>
@@ -178,6 +193,8 @@ class BusyModalManager {
             isShow: true,
             gifIndex: 0,
             tipText: busyModal.props.title
+        }, () => {
+            busyModal.startAnimation(true);
         });
     }
 
@@ -185,7 +202,9 @@ class BusyModalManager {
      * hide modal
      */
     static hide() {
-        busyModal.setState({isShow: false});
+        busyModal.startAnimation(false, () => {
+            busyModal.setState({isShow: false});
+        });
     }
 
     /**
