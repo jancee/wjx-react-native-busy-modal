@@ -16,7 +16,7 @@ React Native的一个组件，提示用户正在加载的弹出框。
 * 无侵入
 
 # 效果
-待补充...
+![on IPhone](./images/gif-ios.gif)
 
 # 例程
 
@@ -94,6 +94,7 @@ import {BusyModalManager} from 'wjx-react-native-busy-modal';
 | containerStyle | object | {} | 窗口 style |
 | imageStyle | object | {} | 图片 Style |
 | titleStyle | object | {} | 标题 Style |
+| animated | boolean | true | 渐入渐出动画 |
 | enableCancelOnClickBlank | boolean | false | 用户在空白处点击，则隐藏弹窗 |
 | enableCancelOnClickModal | boolean | false | 用户在弹窗点击，则隐藏弹窗 |
 | gifInterval | number | 100 | 当自定义动画时，设置每张图片的间隔时间(ms) |

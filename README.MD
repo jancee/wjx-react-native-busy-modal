@@ -17,7 +17,8 @@ You can customize the wait animation, modal animation, text prompt in your compo
 
 * No intrusion
 
-
+# effect
+![on IPhone](./images/gif-ios.gif)
 
 # Demo
 
@@ -95,11 +96,11 @@ import {BusyModalManager} from 'wjx-react-native-busy-modal';
 | containerStyle | object | {} | Modal style |
 | imageStyle | object | {} | Image Style |
 | titleStyle | object | {} | Title Style |
-| enableCancelOnClickBlank | boolean | false | enable hide modal, when blank is clicked |
-| enableCancelOnClickModal | boolean | false | enable hide modal, when modal is clicked |
-| gifInterval | number | 0 | when custom loading image, set interval ms for each image |
-| gifImages | array | [(house)] | when custom loading image, set all images |
-
+| animated | boolean | true | Gradually into the fade out |
+| enableCancelOnClickBlank | boolean | false | Enable hide modal, when blank is clicked |
+| enableCancelOnClickModal | boolean | false | Enable hide modal, when modal is clicked |
+| gifInterval | number | 0 | When custom loading image, set interval ms for each image |
+| gifImages | array | [(house)] | When custom loading image, set all images |
 
 
 
